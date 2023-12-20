@@ -1,84 +1,132 @@
-import 'package:english_words/english_words.dart';
+import 'package:redis/redis.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:demo_app_2/view/record_view.dart';
 
 void main() {
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MaterialApp(
+    title: 'My Next PR',
+    theme: ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+    ),
+    home: RegisterView(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
+
+  @override
+  State<RegisterView> createState() => _RegisterViewState();
+}
+
+class _RegisterViewState extends State<RegisterView> {
+  final TextEditingController _exercise_name = TextEditingController();
+  final TextEditingController _rest_minutes = TextEditingController();
+  final TextEditingController _sets = TextEditingController();
+  final TextEditingController _reps = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    this._exercise_name.dispose();
+    this._rest_minutes.dispose();
+    this._sets.dispose();
+    this._reps.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: MaterialApp(
-        title: 'Namer App',
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-        ),
-        home: MyHomePage(),
-      ),
-    );
-  }
-}
-
-class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
-
-  void getNext() {
-    current = WordPair.random();
-    notifyListeners();
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    MyAppState appState = context.watch<MyAppState>();
-    WordPair pair = appState.current;
-
     return Scaffold(
-      body: Column(
-        children: [
-          Text('A random AWESOME idea:'),
-          BigCard(pair: pair),
+      appBar: AppBar(title: const Text("Home Page")),
+      body: FutureBuilder(
+          future: RedisConnection().connect('localhost', 6379),
+          builder: (context, snapshot) {
+            return Column(
+              children: [
+                TextField(
+                  controller: _exercise_name,
+                  decoration: const InputDecoration(
+                    hintText: "Enter exercise.dart's name",
+                  ),
+                  maxLength: 50,
+                ),
+                TextField(
+                  controller: _rest_minutes,
+                  decoration: const InputDecoration(
+                    hintText: "Minutes of Rest",
+                  ),
+                  maxLength: 50,
+                ),
+                TextField(
+                  controller: _sets,
+                  decoration: const InputDecoration(
+                    hintText: "Number of Sets",
+                  ),
+                  maxLength: 50,
+                ),
+                TextField(
+                  controller: _reps,
+                  decoration: const InputDecoration(
+                    hintText: "Number of Reps",
+                  ),
+                  maxLength: 50,
+                ),
+                TextButton(
+                  onPressed: () async {
+                    final String name = this._exercise_name.text;
+                    final String rest_minutes = this._rest_minutes.text;
+                    final String sets = this._sets.text;
+                    final String reps = this._reps.text;
 
-          ElevatedButton(
-            onPressed: () {
-              appState.getNext();
-            }
-            , child: Text("Next"),
-          )
-        ],
-      ),
-    );
-  }
-}
+                    if (name.isEmpty ||
+                        reps.isEmpty ||
+                        sets.isEmpty ||
+                        rest_minutes.isEmpty) {
+                      return;
+                    }
 
-class BigCard extends StatelessWidget {
-  const BigCard({
-    super.key,
-    required this.pair,
-});
+                    final String id = (name +
+                            rest_minutes +
+                            sets +
+                            reps)
+                        .hashCode
+                        .toString();
 
-  final WordPair pair;
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final TextStyle style = theme.textTheme.displayMedium!.copyWith(
-      color: theme.colorScheme.onPrimary,
-    );
-
-    return Card(
-      color: theme.colorScheme.primary,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Text(pair.asLowerCase, style: style,),
-      ),
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.done:
+                        // TODO: Handle this case.
+                        snapshot.data?.send_object([
+                          "hset",
+                          "movements:$id",
+                          "name",
+                          name,
+                          "rest_minutes",
+                          rest_minutes,
+                          "sets",
+                          sets,
+                          "reps",
+                          reps
+                        ]).then((var response) => {
+                              if (response > 0)
+                                {
+                                  setState(() {
+                                    dispose();
+                                  })
+                                }
+                              else
+                                {print("failed")}
+                            });
+                      default:
+                    }
+                  },
+                  child: const Text("Show user"),
+                ),
+              ],
+            );
+          }),
     );
   }
 }
