@@ -1,4 +1,4 @@
-import 'package:demo_app_2/model/exercise.dart';
+import '/model/exercise.dart';
 
 class Record {
   Exercise exercise;
