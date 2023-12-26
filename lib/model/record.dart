@@ -12,5 +12,4 @@ class Record {
   {
     this.note = note;
   }
-
 }

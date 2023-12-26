@@ -34,7 +34,7 @@ class _RecordViewState extends State<RecordView> {
                   ),
                   maxLength: 50,
                 ),
-                TextButton(
+                ElevatedButton(
                   onPressed: () async {
                     final String name = this._exercise_name.text;
                     print("Pressed");

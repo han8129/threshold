@@ -50,3 +50,4 @@ app.*.map.json
 /macos/*
 /backend/node_modules/
 /backend/package-lock.json
+/pubspec.lock
