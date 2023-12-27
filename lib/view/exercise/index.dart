@@ -1,7 +1,6 @@
-import 'package:demo_app_2/database/exercises_table.dart';
-import 'package:demo_app_2/model/exercise.dart';
-import 'package:demo_app_2/view/exercise/create.dart';
-import 'package:flutter/cupertino.dart';
+import '../../database/exercises_table.dart';
+import '../../model/exercise.dart';
+import 'create.dart';
 import 'package:flutter/material.dart';
 
 class Index extends StatefulWidget {
@@ -69,7 +68,7 @@ class _IndexState extends State<Index> {
                                 'Sets ',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              Text(sets.toString())
+                              Text('$sets ')
                             ],
                           ),
                           Row(
@@ -78,7 +77,7 @@ class _IndexState extends State<Index> {
                                 'Rest Minutes ',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              Text(restMinutes.toString())
+                              Text('$restMinutes ')
                             ],
                           ),
                           Row(
@@ -87,7 +86,7 @@ class _IndexState extends State<Index> {
                                 'Reps ',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              Text(reps.toString())
+                              Text("$reps ")
                             ],
                           )
                         ],

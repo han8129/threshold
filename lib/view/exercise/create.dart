@@ -1,84 +1,34 @@
-import 'package:demo_app_2/model/exercise.dart';
+import '../../model/exercise.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:redis/redis.dart';
 
-class CreateExerciseWidget extends StatefulWidget {
+class CreateExerciseWidget extends StatelessWidget {
   final Exercise? exercise;
   final ValueChanged<Exercise> onSubmit;
-
-  const CreateExerciseWidget({
-    Key? key,
-    this.exercise,
-    required this.onSubmit,
-  }) : super(key: key);
-
-  @override
-  State<CreateExerciseWidget> createState() => _CreateExerciseWidgetState();
-}
-
-class _CreateExerciseWidgetState extends State<CreateExerciseWidget> {
   final name = TextEditingController();
   final sets = TextEditingController();
   final restMinutes = TextEditingController();
   final reps = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  @override
-  void initState() {
-    super.initState();
-
-    if (widget.exercise != null)
-    {
-      name.text = widget.exercise!.name;
-      sets.text = widget.exercise!.sets.toString();
-      reps.text = widget.exercise!.reps.toString();
-      restMinutes.text = widget.exercise!.restMinutes.toString();
-
-      return;
-    }
-
-  }
+  CreateExerciseWidget({
+    Key? key,
+    this.exercise,
+    required this.onSubmit,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final isEditing = widget.exercise != null;
-
+    final isEditing = exercise != null;
     return AlertDialog(
       title: Text(isEditing ? 'Edit Exercise' : 'Add Exercise'),
       content: Form(
           key: formKey,
           child: Column(
             children: [
-              TextFormField(
-                autofocus: true,
-                controller: name,
-                decoration: const InputDecoration(hintText: 'Name'),
-                validator: (value) =>
-                value != null && value.isEmpty ? 'Name is required' : null,
-              ),
-              TextFormField(
-                autofocus: true,
-                controller: sets,
-                decoration: const InputDecoration(hintText: 'Sets'),
-                validator: (value) =>
-                value != null && value.isEmpty ? 'Sets is required' : null,
-              ),
-              TextFormField(
-                autofocus: true,
-                controller: restMinutes,
-                decoration: const InputDecoration(hintText: 'Rest Minutes'),
-                validator: (value) => value != null && value.isEmpty
-                    ? 'Rest Minutes is required'
-                    : null,
-              ),
-              TextFormField(
-                autofocus: true,
-                controller: reps,
-                decoration: const InputDecoration(hintText: 'Reps'),
-                validator: (value) =>
-                value != null && value.isEmpty ? 'Reps is required' : null,
-              ),
+              getTextField(name, 'Name'),
+              getTextField(sets, 'Sets'),
+              getTextField(restMinutes, 'Rest minutes'),
+              getTextField(reps, 'Reps'),
             ],
           )),
       actions: [
@@ -87,12 +37,22 @@ class _CreateExerciseWidgetState extends State<CreateExerciseWidget> {
             child: const Text('Cancel')),
         TextButton(
             onPressed: () => {
-              if (formKey.currentState!.validate())
-                widget.onSubmit(Exercise(name.text, int.parse(sets.text),
-                    double.parse(restMinutes.text), int.parse(reps.text)))
-            },
+                  if (formKey.currentState!.validate())
+                    onSubmit(Exercise(name.text, int.parse(sets.text),
+                        double.parse(restMinutes.text), int.parse(reps.text)))
+                },
             child: const Text('OK'))
       ],
     );
   }
+}
+
+Widget getTextField(TextEditingController controller, String label) {
+  return               TextFormField(
+      autofocus: true,
+      controller: controller,
+      decoration: InputDecoration(hintText: label),
+  validator: (value) =>
+      value != null && value.isEmpty ? '$label is required' : null,
+  );
 }

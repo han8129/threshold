@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:demo_app_2/database/exercises_table.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+const name = 'data.db';
 
 class DatabaseService {
   Database? _database;
@@ -15,19 +20,13 @@ class DatabaseService {
     return _database!;
   }
 
-  Future<String> get fullPath async {
-    const name = 'data.db';
-    final path = await getDatabasesPath();
-    return join(path, name);
-  }
-
   Future<Database> _initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    final path = await fullPath;
+
     var database = await openDatabase(
-      path,
+      name,
       version: 1,
       onCreate: create,
       singleInstance: true,

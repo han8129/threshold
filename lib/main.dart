@@ -10,6 +10,7 @@ import 'model/exercise.dart';
 import 'repository/migration.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
      runApp(MaterialApp(
        title: 'My Next PR',
        theme: ThemeData(
