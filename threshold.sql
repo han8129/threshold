@@ -14,5 +14,7 @@ CREATE TABLE "records" (
 	"duration_seconds"	REAL NOT NULL,
 	"note"	TEXT,
 	PRIMARY KEY("id"),
+
+	getAll()
 	FOREIGN KEY("exercise_id") REFERENCES "exercises"("id") ON DELETE CASCADE on UPDATE CASCADE
 )

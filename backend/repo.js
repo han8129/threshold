@@ -1,13 +1,17 @@
-const redis = require( 'redis' );
+const redis = require( 'redis' )
+const table = "exercise"
 
-async function client()
-{
-    const command = await redis.createClient()
-        .on('error', err => console.log('Redis Client Error', err))
-        .connect();
+module.exports = class ExerciseRepository {
+    constructor(client) {
+        this.client = client
+    }
 
-    var arr = Array.from( command.scanIterator())
-    return arr
+    async getAll() {
+        // idx:bicycle "*" RETURN 2 __key, price
+        return Array.from( await this.client.sendCommand(
+            ['scan', '0', 'match', 'exercise:*']
+        ))[1]
+
+    }
 }
 
-module.export = {client}
