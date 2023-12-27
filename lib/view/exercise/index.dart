@@ -1,4 +1,4 @@
-import '../../database/exercises_table.dart';
+import '../../database/exercises.dart';
 import '../../model/exercise.dart';
 import 'create.dart';
 import 'package:flutter/material.dart';

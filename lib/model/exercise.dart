@@ -26,7 +26,7 @@ class Exercise {
   }
 
   Exercise( this.name, this.sets, this.restMinutes, this.reps ) {
-    id = name.hashCode.toString()
+    id = name
         + sets.toString()
         + restMinutes.toString()
         + reps.toString();
@@ -37,11 +37,6 @@ class Exercise {
     sets = map[columnSets] as int;
     restMinutes = map[columnRestMinutes] as double;
     reps = map[columnReps] as int;
-
-    id = name
-        + sets.toString()
-        + restMinutes.toString()
-        + reps.toString();
-
+    id = map[columnId] as String;
   }
 }

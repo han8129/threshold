@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:demo_app_2/database/exercises_table.dart';
+import 'package:demo_app_2/database/exercises.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';

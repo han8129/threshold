@@ -36,7 +36,7 @@ class ExerciseTable {
 
   Future<Exercise> getById(String id) async {
     final database = await DatabaseService().database;
-    final exercise = await database.query(tableName, where: "id = $id");
+    final exercise = await database.query(tableName, where: "id = '$id'");
 
     return Exercise.fromMap(exercise.first);
   }

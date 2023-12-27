@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:demo_app_2/view/exercise/index.dart';
+import 'view/record/index.dart';
 import 'package:redis/redis.dart';
 import 'package:flutter/material.dart';
 import 'view/exercise/create.dart';
@@ -17,6 +17,6 @@ void main() {
          useMaterial3: true,
          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
        ),
-       home: Index(),
+       home: Index(exercise: Exercise('abc', 3, 3.0, 1)),
      ));
    }
