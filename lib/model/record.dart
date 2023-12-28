@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 import '/model/exercise.dart';
 
 const columnId = 'id';
@@ -13,7 +15,7 @@ class Record {
   late DateTime date;
   String? note;
 
-  Record(this.exercise, this.durationInSeconds, this.date) {
+  Record(this.exercise, this.durationInSeconds, this.date, [this.note]) {
     id = exercise.name + durationInSeconds.toString() + date.toString();
   }
 
@@ -25,7 +27,7 @@ class Record {
     return <String, Object?>{
       columnId: id,
       columnExerciseId: exercise.id,
-      columnDate: date,
+      columnDate: date.toString().substring(0, 10),
       columnDurationSeconds: durationInSeconds,
       columnNote: note,
     };

@@ -17,6 +17,6 @@ void main() {
          useMaterial3: true,
          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
        ),
-       home: Index(exercise: Exercise('abc', 3, 3.0, 1)),
+       home: Index(exercise: Exercise('60m sprint', 3, 3.0, 1)),
      ));
    }

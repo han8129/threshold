@@ -1,4 +1,5 @@
 import 'package:demo_app_2/database/records.dart';
+import 'package:intl/intl.dart';
 
 import '../../model/exercise.dart';
 import '../../model/record.dart';
@@ -27,7 +28,7 @@ class _IndexState extends State<Index> {
 
   void getExercises() {
     setState(() {
-      futureRecords = recordsTable.getAll();
+      futureRecords = recordsTable.getAllByExerciseId(widget.exercise.id);
     });
   }
 
@@ -56,7 +57,7 @@ class _IndexState extends State<Index> {
               return ListView.separated(
                   itemBuilder: (context, index) {
                     final Record record = records[index];
-                    final String date = record.date.toString();
+                    final String date = DateFormat.yMd().format( record.date );
                     final duration = record.durationInSeconds.toString();
                     final note = record.note;
 
@@ -69,18 +70,18 @@ class _IndexState extends State<Index> {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text('$duration '),
-                          (note == null) ? Text('') :
-                            Text(
-                              'Note ',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-
+                          (note == null)
+                              ? Text('')
+                              : Text(
+                                  'Note ',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
                           (note == null) ? Text('') : Text('$note '),
                         ],
                       ),
                       trailing: IconButton(
                         onPressed: () async {
-                          recordsTable.getAll();
+                          recordsTable.getAllByExerciseId(widget.exercise.id);
                         },
                         icon: const Icon(
                           Icons.delete,
@@ -90,15 +91,15 @@ class _IndexState extends State<Index> {
                       onTap: () {
                         showDialog(
                             context: context,
-                            builder: (context) => CreateExerciseWidget(
-                                    onSubmit: (exercise) async {
-                                  await recordsTable.updateById(exercise.id);
+                            builder: (context) =>
+                                Create(onSubmit: (record) async {
+                                  await recordsTable.updateById(record.id);
 
-                                  recordsTable.getAll();
+                                  recordsTable.getAllByExerciseId(widget.exercise.id);
 
                                   if (!mounted) return;
                                   Navigator.of(context).pop();
-                                }));
+                                }, exercise: widget.exercise,));
                       },
                     );
                   },
@@ -114,8 +115,8 @@ class _IndexState extends State<Index> {
           onPressed: () {
             showDialog(
               context: context,
-              builder: (_) => CreateExerciseWidget(onSubmit: (exercise) async {
-                await recordsTable.create(exercise as Record);
+              builder: (_) => Create(exercise: widget.exercise, onSubmit: (exercise) async {
+                await recordsTable.create(exercise);
 
                 if (!mounted) return;
 

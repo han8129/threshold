@@ -28,16 +28,16 @@ CREATE TABLE IF NOT EXISTS "$tableName" (
     return await database.insert(tableName, record.toMap());
   }
 
-  Future<List<Record>> getAll() async {
+  Future<List<Record>> getAllByExerciseId(String id) async {
     final database = await DatabaseService().database;
 
     final records =
-        await database.rawQuery('''select distinct * from $tableName;''');
+        await database.rawQuery('''select distinct * from $tableName where exercise_id = "$id"''');
 
     var list = <Record>[];
+    Exercise exercise =
+    await ExerciseTable().getById(id);
     records.forEach((element) async {
-      Exercise exercise =
-          await ExerciseTable().getById(element[columnExerciseId] as String);
 
       list.add(Record(exercise, element[columnDurationSeconds] as double,
           DateTime.parse(element[columnDate] as String)));
