@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'view/record/index.dart';
+import 'view/exercise/index.dart';
 import 'package:redis/redis.dart';
 import 'package:flutter/material.dart';
 import 'view/exercise/create.dart';
@@ -17,6 +14,6 @@ void main() {
          useMaterial3: true,
          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
        ),
-       home: Index(exercise: Exercise('60m sprint', 3, 3.0, 1)),
+       home: Index(),
      ));
    }

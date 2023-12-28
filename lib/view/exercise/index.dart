@@ -1,6 +1,7 @@
 import '../../database/exercises.dart';
 import '../../model/exercise.dart';
 import 'create.dart';
+import '../record/index.dart' as record;
 import 'package:flutter/material.dart';
 
 class Index extends StatefulWidget {
@@ -101,17 +102,11 @@ class _IndexState extends State<Index> {
                         ),
                       ),
                       onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) => CreateExerciseWidget(
-                                    onSubmit: (exercise) async {
-                                  await thresholdDB.updateById(exercise.id);
-
-                                  thresholdDB.getAll();
-
-                                  if (!mounted) return;
-                                  Navigator.of(context).pop();
-                                }));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    record.Index(exercise: exercise)));
                       },
                     );
                   },

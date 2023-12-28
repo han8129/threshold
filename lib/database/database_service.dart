@@ -2,9 +2,7 @@ import 'dart:io';
 
 import 'package:demo_app_2/database/exercises.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 const name = 'data.db';
