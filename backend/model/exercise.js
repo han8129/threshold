@@ -1,18 +1,19 @@
 module.exports = class Exercise {
-    constructor(name, sets, restMinutes, reps, id) {
+    constructor(name, sets, restMinutes, reps) {
         this.name = name;
         this.sets = sets;
         this.restMinutes = restMinutes;
         this.reps = reps;
-        this.id = id
+        this.id = name + sets + restMinutes + reps
     }
 
     getJSON() {
-        return {
-            "name" : this.name,
+        return (
+            `exercises:${this.id}`, {
+                "name" : this.name,
                 "sets" : this.sets,
-                "restMinutes" : this.restMinutes,
+                "rest_minutes" : this.restMinutes,
                 "reps" : this.reps
-        }
+            })
     }
 }

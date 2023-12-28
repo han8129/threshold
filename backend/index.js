@@ -1,41 +1,35 @@
-const ExerciseRepository = require('./repo.js')
-var Exercise = require('./model/exercise.js')
+const exercises = require('./database/exercises.js')
+const records = require('./database/records.js')
 const express = require('express')
-const redis = require('redis')
 const port = 8000
-
 const app = express()
 
-function error(status, msg) {
-  var err = new Error(msg);
-  err.status = status;
-  return err;
+
+async function main() {
+
+    const list = records.getByExerciseId('squad33.11').then((list) => {
+        console.log(list)
+    })
+
+    app.get('/exercise/:id', (req, res) => {
+        console.log(req.params)
+        res.send('exercise ' + req.params.id)
+    })
+
+    app.get('/exercise', (req, res) => {
+        res.send({
+            id : "1",
+            name : "12"
+        })
+    })
+
+    app.post('/exercise', (req, res) => {
+        res.status(201).send('Success')
+    })
+
+    app.listen(port, () => {
+        console.log(`Listening on ${ port }`)
+    })
 }
 
-app.get('/exercise/:id', (req, res) => {
-    console.log(req.params)
-    res.send('exercise ' + req.params.id)
-})
-
-app.get('/exercise', (req, res) => {
-    console.log("req")
-    res.send({
-        id : "1",
-        name : "12"
-    })
-})
-
-app.listen(port, () => {
-    console.log(`Listening on ${ port }`)
-})
-
-const client = redis.createClient().connect().then(value => {
-    const exerciseRepo = new ExerciseRepository(value)
-     exerciseRepo.getAll().then(data => {
-         for (key of data)
-         {
-             console.log(key)
-         }
-    })
-})
-
+main()
