@@ -6,25 +6,43 @@ const app = express()
 
 
 async function main() {
-
-    const list = records.getByExerciseId('squad33.11').then((list) => {
-        console.log(list)
+    app.get('/exercises/:id', (req, res) => {
+        exercises.getById(req.params.id)
+            .then((exercise) => {
+                res.json(exercise)
+            })
     })
 
-    app.get('/exercise/:id', (req, res) => {
-        console.log(req.params)
-        res.send('exercise ' + req.params.id)
+    app.get('/exercises', (req, res) => {
+        exercises.getAll().then((exercises) =>
+            {
+                res.json(exercises)
+            })
     })
 
-    app.get('/exercise', (req, res) => {
-        res.send({
-            id : "1",
-            name : "12"
+    app.post('/exercises', express.json(), (req, res) => {
+        console.log((req.body))
+
+        exercises.insert(req.body).then((value) => {
+            res.status(201).json({
+                integer : value
+            })
         })
     })
 
-    app.post('/exercise', (req, res) => {
-        res.status(201).send('Success')
+    app.get('/records/:exercise_id', async (req, res) => {
+        records.getByExerciseId(req.params.exercise_id)
+            .then((records) => {
+                res.json(records)
+            })
+    })
+
+    app.post('/records', express.json(), (req, res) => {
+        records.insert(req.body).then((value) => {
+            res.status(201).json({
+                integer : value
+            })
+        })
     })
 
     app.listen(port, () => {

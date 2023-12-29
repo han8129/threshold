@@ -1,27 +1,23 @@
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:demo_app_2/database/exercises.dart' as Exercises;
 import 'package:flutter/animation.dart';
-const String columnId = 'id';
-const columnName = 'name' ;
-const columnSets = 'sets';
-const columnRestMinutes = 'rest_minutes';
-const columnReps = 'reps';
-
 class Exercise {
   late String id;
   late String name;
   late int sets;
   late double restMinutes;
   late int reps;
+  bool isSynced = false;
 
   Map<String, Object?> toMap() {
     return <String, Object?>{
-      columnId : id,
-      columnName : name,
-      columnSets : sets,
-      columnRestMinutes : restMinutes,
-      columnReps : reps,
+      Exercises.columnId : id,
+      Exercises.columnName : name,
+      Exercises.columnSets : sets.toString(),
+      Exercises.columnRestMinutes : restMinutes.toString(),
+      Exercises.columnReps : reps.toString(),
     };
   }
 
@@ -33,10 +29,15 @@ class Exercise {
   }
 
   Exercise.fromMap(Map<String, Object?> map) {
-    name = map[columnName] as String;
-    sets = map[columnSets] as int;
-    restMinutes = map[columnRestMinutes] as double;
-    reps = map[columnReps] as int;
-    id = map[columnId] as String;
+    name = map[Exercises.columnName] as String;
+    sets = map[Exercises.columnSets] as int;
+    restMinutes = map[Exercises.columnRestMinutes] as double;
+    reps = map[Exercises.columnReps] as int;
+    id = map[Exercises.columnId] as String;
+    isSynced = (map[Exercises.columnIsSynced] as int == 1);
+  }
+
+  set setIsSynced(bool value){
+    isSynced = value;
   }
 }

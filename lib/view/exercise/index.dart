@@ -13,7 +13,7 @@ class Index extends StatefulWidget {
 
 class _IndexState extends State<Index> {
   Future<List<Exercise>>? futureExercises;
-  final thresholdDB = ExerciseTable();
+  final exercisesRepository = ExercisesRepository();
 
   @override
   void initState() {
@@ -25,7 +25,7 @@ class _IndexState extends State<Index> {
 
   void getExercises() {
     setState(() {
-      futureExercises = thresholdDB.getAll();
+      futureExercises = exercisesRepository.getAll();
     });
   }
 
@@ -94,7 +94,7 @@ class _IndexState extends State<Index> {
                       ),
                       trailing: IconButton(
                         onPressed: () async {
-                          thresholdDB.getAll();
+                          exercisesRepository.getAll();
                         },
                         icon: const Icon(
                           Icons.delete,
@@ -123,7 +123,7 @@ class _IndexState extends State<Index> {
             showDialog(
               context: context,
               builder: (_) => CreateExerciseWidget(onSubmit: (exercise) async {
-                await thresholdDB.create(exercise);
+                await exercisesRepository.create(exercise);
 
                 if (!mounted) return;
 

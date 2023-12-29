@@ -6,6 +6,11 @@ import '../model/record.dart';
 
 class RecordsTable {
   final tableName = 'records';
+  late final ExercisesRepository exercisesRepository;
+
+  RecordsTable() {
+    exercisesRepository = ExercisesRepository();
+  }
 
   Future<void> createTable(Database database) async {
     await database.execute('''
@@ -36,7 +41,7 @@ CREATE TABLE IF NOT EXISTS "$tableName" (
 
     var list = <Record>[];
     Exercise exercise =
-    await ExerciseTable().getById(id);
+    await exercisesRepository.getById(id);
     records.forEach((element) async {
 
       list.add(Record(exercise, element[columnDurationSeconds] as double,
@@ -52,7 +57,7 @@ CREATE TABLE IF NOT EXISTS "$tableName" (
 
     final record = records.last;
     Exercise exercise =
-        await ExerciseTable().getById(record[columnExerciseId] as String);
+        await exercisesRepository.getById(record[columnExerciseId] as String);
 
     return Record(exercise, record[columnDurationSeconds] as double,
         record[columnDate] as DateTime);

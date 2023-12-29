@@ -1,3 +1,5 @@
+import 'package:demo_app_2/database/remote/exercises.dart';
+
 import 'view/exercise/index.dart';
 import 'package:redis/redis.dart';
 import 'package:flutter/material.dart';
@@ -16,4 +18,5 @@ void main() {
        ),
        home: Index(),
      ));
+
    }
