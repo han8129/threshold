@@ -1,5 +1,9 @@
 const { connection } = require( './../redis_service.js')
 const table = "records"
+const columnExerciseId = 'exercise_id'
+const columnDate = 'date'
+const columnDuration = 'duration'
+const columnNote = 'note'
 
 module.exports = {
     async getByExerciseId(id) {
@@ -27,16 +31,22 @@ module.exports = {
 
     ,async insert(record) {
         const redis = await connection()
+        const id = record.id
+        delete record.id
 
-        return await redis.hSet(
-            `${table}:${record.id}`,
-            {
-                exercise_id : record.id,
-                date : record.date,
-                duration : record.duration,
-                note : record.note
-            }
-        )
+        return await redis.hSet( `${table}:${id}`, record)
+    }
+
+    ,async delete(id) {
+        const redis = await connection()
+
+        return await redis.sendCommand( [
+            'HDEL', `${table}:${id}`,
+            columnExerciseId,
+            columnDate,
+            columnDuration,
+            columnNote
+        ])
     }
 }
 

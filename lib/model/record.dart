@@ -1,35 +1,41 @@
 import 'package:intl/intl.dart';
 
 import '/model/exercise.dart';
-
-const columnId = 'id';
-const columnExerciseId = 'exercise_id';
-const columnDate = 'date';
-const columnDurationSeconds = 'duration_seconds';
-const columnNote = 'note';
+import '/database/local/records.dart';
 
 class Record {
   late String id;
-  late Exercise exercise;
+  late String exerciseId;
   late double durationInSeconds;
   late DateTime date;
-  String? note;
+  late String note;
+  bool isSynced = false;
 
-  Record(this.exercise, this.durationInSeconds, this.date, [this.note]) {
-    id = exercise.name + durationInSeconds.toString() + date.toString();
-  }
+  Record(this.id, this.exerciseId, this.durationInSeconds, this.date, [this.note = '']) ;
 
   setNote(String note) {
     this.note = note;
   }
 
-  Map<String, Object?> toMap() {
-    return <String, Object?>{
+  Map<String, String> toMap() {
+    return <String, String>{
       columnId: id,
-      columnExerciseId: exercise.id,
+      columnExerciseId: exerciseId,
       columnDate: date.toString().substring(0, 10),
-      columnDurationSeconds: durationInSeconds,
+      columnDurationSeconds: durationInSeconds.toString(),
       columnNote: note,
     };
+  }
+
+  Record.fromMap(Map<String, Object?> map) {
+    date = DateTime.parse(map[columnDate] as String);
+    durationInSeconds = map[columnDurationSeconds] as double;
+    exerciseId = map[columnExerciseId] as String;
+    note = (map[columnNote] as String);
+    id = map[columnId] as String;
+  }
+
+  set setIsSynced(bool value){
+    isSynced = value;
   }
 }

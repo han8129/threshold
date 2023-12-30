@@ -1,7 +1,7 @@
 import 'dart:ffi';
 import 'dart:io';
 
-import 'package:demo_app_2/database/exercises.dart' as Exercises;
+import 'package:demo_app_2/database/local/exercises.dart' as Exercises;
 import 'package:flutter/animation.dart';
 class Exercise {
   late String id;
@@ -11,9 +11,19 @@ class Exercise {
   late int reps;
   bool isSynced = false;
 
-  Map<String, Object?> toMap() {
-    return <String, Object?>{
+  Map<String, String> toMap() {
+    return <String, String>{
       Exercises.columnId : id,
+      Exercises.columnName : name,
+      Exercises.columnSets : sets.toString(),
+      Exercises.columnRestMinutes : restMinutes.toString(),
+      Exercises.columnReps : reps.toString(),
+      Exercises.columnIsSynced : (isSynced) ? '1' : '0',
+    };
+  }
+
+  Map<String, String> toMapNoId() {
+    return <String, String>{
       Exercises.columnName : name,
       Exercises.columnSets : sets.toString(),
       Exercises.columnRestMinutes : restMinutes.toString(),
@@ -21,12 +31,7 @@ class Exercise {
     };
   }
 
-  Exercise( this.name, this.sets, this.restMinutes, this.reps ) {
-    id = name
-        + sets.toString()
-        + restMinutes.toString()
-        + reps.toString();
-  }
+  Exercise(this.id, this.name, this.sets, this.restMinutes, this.reps );
 
   Exercise.fromMap(Map<String, Object?> map) {
     name = map[Exercises.columnName] as String;

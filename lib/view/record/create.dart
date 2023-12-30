@@ -4,6 +4,7 @@ import '../../model/record.dart';
 
 import '../../model/exercise.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class Create extends StatelessWidget {
   final ValueChanged<Record> onSubmit;
@@ -21,6 +22,8 @@ class Create extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    dateField.text = DateFormat.yMd().format(DateTime.now());
+
     return AlertDialog(
       title: Text('Add Record'),
       content: Form(
@@ -30,15 +33,31 @@ class Create extends StatelessWidget {
               TextFormField(
                   autofocus: false,
                   controller: dateField,
-                  decoration: InputDecoration(
-                      hintText: DateFormat.yMd().format(DateTime.now())),
+                  decoration: InputDecoration(labelText: 'Date'),
                   validator: (value) => (value == null)
                       ? null
                       : (DateTime.tryParse(value) != null)
                           ? 'Invalid Date'
                           : null),
-              getTextField(durationField, 'Duration (eg: 1.1s)'),
-              getTextField(noteField, 'Note'),
+              TextFormField(
+                autofocus: true,
+                controller: durationField,
+                decoration: InputDecoration(
+                    labelText: 'Duration in Seconds', hintText: 'Eg: 1.1'),
+                validator: (number) {
+                  if (null == number) {
+                    return 'Duration is required';
+                  }
+                  if (null == double.tryParse(number)) {
+                    return "Not a valid number";
+                  }
+
+                  return null;
+                },
+              ),
+              TextFormField(
+                  controller: noteField,
+                  decoration: InputDecoration(labelText: 'Note')),
             ],
           )),
       actions: [
@@ -52,14 +71,14 @@ class Create extends StatelessWidget {
   }
 
   Record getNewRecord() {
-    DateTime date = (dateField.text.isEmpty)
+    DateTime date = (DateFormat.yMd().format(DateTime.now()) == dateField.text)
         ? DateTime.now()
         : DateTime.parse(dateField.text);
     double duration = double.parse(durationField.text);
 
     return (noteField.text == '')
-        ? Record(exercise, duration, date)
-        : Record(exercise, duration, date, noteField.text);
+        ? Record(Uuid().v1(), exercise.id, duration, date)
+        : Record(Uuid().v1(), exercise.id, duration, date, noteField.text);
   }
 }
 

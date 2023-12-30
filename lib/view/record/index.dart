@@ -1,10 +1,14 @@
-import 'package:demo_app_2/database/records.dart';
+import 'package:demo_app_2/database/local/deleted_records.dart';
+import 'package:demo_app_2/view/record/update.dart';
+
+import '/database/local/records.dart';
 import 'package:intl/intl.dart';
 
-import '../../model/exercise.dart';
-import '../../model/record.dart';
+import '/model/exercise.dart';
+import '/model/record.dart';
 import 'create.dart';
 import 'package:flutter/material.dart';
+import '/database/remote/records.dart' as remote_repository;
 
 class Index extends StatefulWidget {
   final Exercise exercise;
@@ -16,19 +20,20 @@ class Index extends StatefulWidget {
 
 class _IndexState extends State<Index> {
   Future<List<Record>>? futureRecords;
-  final recordsTable = RecordsTable();
+  final localRepository = RecordsTable();
+  final deletedRepository = DeletedRecordsTable();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    getExercises();
+    getRecords();
   }
 
-  void getExercises() {
+  void getRecords() {
     setState(() {
-      futureRecords = recordsTable.getAllByExerciseId(widget.exercise.id);
+      futureRecords = localRepository.getByExerciseId(widget.exercise.id);
     });
   }
 
@@ -57,7 +62,7 @@ class _IndexState extends State<Index> {
               return ListView.separated(
                   itemBuilder: (context, index) {
                     final Record record = records[index];
-                    final String date = DateFormat.yMd().format( record.date );
+                    final String date = DateFormat.yMd().format(record.date);
                     final duration = record.durationInSeconds.toString();
                     final note = record.note;
 
@@ -70,37 +75,52 @@ class _IndexState extends State<Index> {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text('$duration '),
-                          (note == null)
+                          (note == '')
                               ? Text('')
                               : Text(
                                   'Note ',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                          (note == null) ? Text('') : Text('$note '),
+                          (note == '') ? Text('') : Text('$note '),
+                          IconButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => Update(
+                                          record: record,
+                                          exercise: widget.exercise,
+                                          onSubmit: (record) async {
+                                            await localRepository
+                                                .update(record);
+
+                                            if (!mounted) return;
+                                            Navigator.of(context).pop();
+                                          },
+                                        ));
+                                getRecords();
+                              },
+                              icon: Icon(
+                                Icons.edit,
+                                color: Colors.yellow,
+                              )),
                         ],
                       ),
                       trailing: IconButton(
                         onPressed: () async {
-                          recordsTable.getAllByExerciseId(widget.exercise.id);
+                          final status = await localRepository.delete(record);
+
+                          if (status < 0) return;
+
+                          deletedRepository.create(record);
+
+                          remote_repository.delete(record.id).then((isSynced) =>
+                              {if (isSynced) deletedRepository.delete(record)});
                         },
                         icon: const Icon(
                           Icons.delete,
                           color: Colors.red,
                         ),
                       ),
-                      onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) =>
-                                Create(onSubmit: (record) async {
-                                  await recordsTable.updateById(record.id);
-
-                                  recordsTable.getAllByExerciseId(widget.exercise.id);
-
-                                  if (!mounted) return;
-                                  Navigator.of(context).pop();
-                                }, exercise: widget.exercise,));
-                      },
                     );
                   },
                   separatorBuilder: (context, index) => const SizedBox(
@@ -115,15 +135,19 @@ class _IndexState extends State<Index> {
           onPressed: () {
             showDialog(
               context: context,
-              builder: (_) => Create(exercise: widget.exercise, onSubmit: (exercise) async {
-                await recordsTable.create(exercise);
+              builder: (_) => Create(
+                  exercise: widget.exercise,
+                  onSubmit: (record) async {
+                    record.isSynced = await remote_repository.post(record);
 
-                if (!mounted) return;
+                    await localRepository.create(record);
 
-                getExercises();
+                    if (!mounted) return;
 
-                Navigator.of(context).pop();
-              }),
+                    getRecords();
+
+                    Navigator.of(context).pop();
+                  }),
             );
           },
         ),

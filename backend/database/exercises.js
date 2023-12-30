@@ -1,5 +1,9 @@
 const { connection } = require( './../redis_service.js')
 const table = "exercises"
+const columnName = 'name'
+const columnSets = 'sets'
+const columnRestMinutes = 'rest_minutes'
+const columnReps = 'reps'
 
 module.exports = {
     async getAll() {
@@ -13,28 +17,33 @@ module.exports = {
                 const id = e.substr(table.length + 1,)
                 const exercise = await redis.hGetAll(e)
 
-                return ({
+                return {
                     id : id,
                     name : exercise.name,
                     sets : exercise.sets,
                     rest_minutes : exercise.rest_minutes,
                     reps : exercise.reps
-                })
+                }
             })
         )
     }
 
     ,async insert(exercise) {
         const redis = await connection()
-        //console.log(JSON.parse(exercise))
+
+        const id = exercise.id
+        delete exercise.id
+
         return await redis.hSet(
-            `${table}:${exercise.id}`,
-            {
-                name : exercise.name,
-                sets : exercise.sets,
-                rest_minutes : exercise.rest_minutes,
-                reps : exercise.reps
-            }
+            `${table}:${id}`, exercise
+        )
+    }
+
+    ,async update(id, properties) {
+        const redis = await connection()
+
+        return await redis.hSet(
+            `${table}:${id}`, properties
         )
     }
 
@@ -48,6 +57,20 @@ module.exports = {
             rest_minutes : exercise.rest_minutes,
             reps : exercise.reps
         }
+    }
+
+    ,async delete(id) {
+        const redis = await connection()
+
+        return await redis.sendCommand(
+            [
+                'HDEL', `${table}:${id}`,
+                columnName ,
+                columnSets,
+                columnRestMinutes,
+                columnReps
+            ]
+        )
     }
 }
 
