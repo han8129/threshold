@@ -1,5 +1,5 @@
-import 'package:demo_app_2/database/local/deleted_records.dart';
-import 'package:demo_app_2/view/record/update.dart';
+import '/database/local/deleted_records.dart';
+import '/view/record/update.dart';
 
 import '/database/local/records.dart';
 import 'package:intl/intl.dart';
@@ -88,16 +88,10 @@ class _IndexState extends State<Index> {
                                     context: context,
                                     builder: (context) => Update(
                                           record: record,
-                                          exercise: widget.exercise,
-                                          onSubmit: (record) async {
-                                            await localRepository
-                                                .update(record);
-
-                                            if (!mounted) return;
-                                            Navigator.of(context).pop();
-                                          },
+                                          exerciseId: widget.exercise.id,
+                                          onSubmit: (record) async =>
+                                              update(record),
                                         ));
-                                getRecords();
                               },
                               icon: Icon(
                                 Icons.edit,
@@ -106,16 +100,7 @@ class _IndexState extends State<Index> {
                         ],
                       ),
                       trailing: IconButton(
-                        onPressed: () async {
-                          final status = await localRepository.delete(record);
-
-                          if (status < 0) return;
-
-                          deletedRepository.create(record);
-
-                          remote_repository.delete(record.id).then((isSynced) =>
-                              {if (isSynced) deletedRepository.delete(record)});
-                        },
+                        onPressed: delete(record),
                         icon: const Icon(
                           Icons.delete,
                           color: Colors.red,
@@ -137,19 +122,43 @@ class _IndexState extends State<Index> {
               context: context,
               builder: (_) => Create(
                   exercise: widget.exercise,
-                  onSubmit: (record) async {
-                    record.isSynced = await remote_repository.post(record);
-
-                    await localRepository.create(record);
-
-                    if (!mounted) return;
-
-                    getRecords();
-
-                    Navigator.of(context).pop();
-                  }),
+                  onSubmit: (record) async => await create(record)),
             );
           },
         ),
       );
+
+  create(Record record) async {
+    record.isSynced = await remote_repository.post(record);
+
+    await localRepository.create(record);
+
+    if (!mounted) return;
+
+    getRecords();
+
+    Navigator.of(context).pop();
+  }
+
+  delete(Record record) async {
+    if (1 > await localRepository.delete(record)) return;
+
+    await deletedRepository.create(record);
+
+    final bool isSynced = await remote_repository.delete(record.id);
+
+    if (isSynced) deletedRepository.delete(record);
+
+    getRecords();
+  }
+
+  update(Record record) async {
+    await localRepository.update(record);
+
+    if (!mounted) return;
+
+    getRecords();
+
+    Navigator.of(context).pop();
+  }
 }

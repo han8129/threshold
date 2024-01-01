@@ -1,4 +1,4 @@
-import 'package:demo_app_2/database/sync.dart';
+import '/database/sync.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
 import '/database/remote/exercises.dart';

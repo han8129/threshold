@@ -1,5 +1,5 @@
-import 'package:demo_app_2/database/local/database_service.dart';
-import 'package:demo_app_2/model/exercise.dart';
+import '/database/local/database_service.dart';
+import '/model/exercise.dart';
 import 'package:sqflite/sqflite.dart';
 
 const tableName = 'deleted_exercises';

@@ -1,5 +1,3 @@
-import 'package:demo_app_2/database/local/exercises.dart';
-import 'package:demo_app_2/model/exercise.dart';
 import 'package:sqflite/sqflite.dart';
 import 'database_service.dart';
 import '../../model/record.dart';
