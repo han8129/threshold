@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:demo_app_2/model/exercise.dart';
-import 'package:demo_app_2/model/record.dart';
+import '/model/exercise.dart';
+import '/model/record.dart';
 
 import './local/records.dart';
 import './local/exercises.dart';

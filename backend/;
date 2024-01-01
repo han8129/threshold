@@ -1,0 +1,7 @@
+service:
+  app:
+    image: myredia
+    build: ./Dockerfile
+    attach: false
+    container_name: threshold
+    port: "8000:80"

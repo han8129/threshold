@@ -1,7 +1,7 @@
 import 'dart:ffi';
 import 'dart:io';
 
-import 'package:demo_app_2/database/local/exercises.dart' as Exercises;
+import '/database/local/exercises.dart' as Exercises;
 import 'package:flutter/animation.dart';
 class Exercise {
   late String id;

@@ -1,8 +1,5 @@
 import 'package:intl/intl.dart';
-
 import '../../model/record.dart';
-
-import '../../model/exercise.dart';
 import 'package:flutter/material.dart';
 
 class Update extends StatelessWidget {
@@ -11,12 +8,12 @@ class Update extends StatelessWidget {
   final durationField = TextEditingController();
   final noteField = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  final Exercise exercise;
+  final String exerciseId;
   final Record record;
 
   Update(
       {Key? key,
-      required this.exercise,
+      required this.exerciseId,
       required this.onSubmit,
       required this.record})
       : super(key: key);
@@ -28,7 +25,7 @@ class Update extends StatelessWidget {
     noteField.text = record.note;
 
     return AlertDialog(
-      title: Text('Add Record'),
+      title: Text('Edit Record'),
       content: Form(
           key: formKey,
           child: Column(
@@ -83,8 +80,8 @@ class Update extends StatelessWidget {
     double duration = double.parse(durationField.text);
 
     return (noteField.text == '')
-        ? Record(record.id, exercise.id, duration, date)
-        : Record(record.id, exercise.id, duration, date, noteField.text);
+        ? Record(record.id, exerciseId, duration, date)
+        : Record(record.id, exerciseId, duration, date, noteField.text);
   }
 }
 

@@ -6,7 +6,6 @@ import 'create.dart';
 import '../record/index.dart' as record;
 import 'package:flutter/material.dart';
 import '/database/remote/exercises.dart' as remote_repository;
-import 'package:uuid/uuid.dart';
 import 'update.dart';
 
 class Index extends StatefulWidget {
@@ -69,53 +68,29 @@ class _IndexState extends State<Index> {
                       title: Text(name),
                       subtitle: Row(
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Sets ',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text('$sets ')
-                            ],
+                          Text(
+                            'Sets ',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          Row(
-                            children: [
-                              Text(
-                                'Rest Minutes ',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text('$restMinutes ')
-                            ],
+                          Text('$sets '),
+                          Text(
+                            'Rest Minutes ',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          Row(
-                            children: [
-                              Text(
-                                'Reps ',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text("$reps ")
-                            ],
+                          Text('$restMinutes '),
+                          Text(
+                            'Reps ',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
+                          Text("$reps "),
                           IconButton(
                               onPressed: () {
                                 showDialog(
                                     context: context,
                                     builder: (context) => Update(
                                           exercise: exercise,
-                                          onSubmit: (newExercise) async {
-                                            newExercise.isSynced =
-                                                await remote_repository
-                                                    .put(newExercise);
-
-                                            await localExercisesRepository
-                                                .update(newExercise);
-
-                                            if (!mounted) return;
-
-                                            Navigator.of(context).pop();
-
-                                            getExercises();
-                                          },
+                                          onSubmit: (updatedExercise) async =>
+                                              update(updatedExercise),
                                         ));
                               },
                               icon: Icon(
@@ -125,24 +100,7 @@ class _IndexState extends State<Index> {
                         ],
                       ),
                       trailing: IconButton(
-                        onPressed: () async {
-                          final int status =
-                              await localExercisesRepository.delete(exercise);
-
-                          if (status < 0) {
-                            return;
-                          }
-
-                          await deletedExercises.create(exercise);
-
-                          remote_repository.delete(exercise.id).then(
-                              (isSynced) => {
-                                    if (isSynced)
-                                      deletedExercises.delete(exercise)
-                                  });
-
-                          getExercises();
-                        },
+                        onPressed: () async => delete(exercise),
                         icon: const Icon(
                           Icons.delete,
                           color: Colors.red,
@@ -169,20 +127,49 @@ class _IndexState extends State<Index> {
           onPressed: () {
             showDialog(
               context: context,
-              builder: (_) => CreateExerciseWidget(onSubmit: (exercise) async {
-                final bool isSynced = await remote_repository.post(exercise);
-                exercise.isSynced = isSynced;
-
-                await localExercisesRepository.create(exercise);
-
-                if (!mounted) return;
-
-                getExercises();
-
-                Navigator.of(context).pop();
-              }),
+              builder: (_) =>
+                  Create(onSubmit: (exercise) async => await create(exercise)),
             );
           },
         ),
       );
+
+  create(Exercise exercise) async {
+    final bool isSynced = await remote_repository.post(exercise);
+    exercise.isSynced = isSynced;
+
+    await localExercisesRepository.create(exercise);
+
+    if (!mounted) return;
+
+    getExercises();
+
+    Navigator.pop(context);
+  }
+
+  update(Exercise exercise) async {
+    exercise.isSynced = await remote_repository.put(exercise);
+
+    await localExercisesRepository.update(exercise);
+
+    if (!mounted) return;
+
+    Navigator.of(context).pop();
+
+    getExercises();
+  }
+
+  delete(Exercise exercise) async {
+    if (0 > await localExercisesRepository.delete(exercise)) return;
+
+    await deletedExercises.create(exercise);
+
+    final bool isSynced = await remote_repository.delete(exercise.id);
+
+    if (isSynced) {
+      await deletedExercises.delete(exercise);
+    }
+
+    getExercises();
+  }
 }

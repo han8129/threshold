@@ -1,6 +1,5 @@
 import '../../model/exercise.dart';
 import 'package:flutter/material.dart';
-import "package:uuid/uuid.dart";
 
 class Update extends StatelessWidget {
   final Exercise exercise;
@@ -17,7 +16,8 @@ class Update extends StatelessWidget {
   Widget build(BuildContext context) {
     final name = TextEditingController(text: exercise.name);
     final sets = TextEditingController(text: exercise.sets.toString());
-    final restMinutes = TextEditingController(text: exercise.restMinutes.toString());
+    final restMinutes =
+        TextEditingController(text: exercise.restMinutes.toString());
     final reps = TextEditingController(text: exercise.reps.toString());
 
     return AlertDialog(
@@ -38,14 +38,14 @@ class Update extends StatelessWidget {
             child: const Text('Cancel')),
         TextButton(
             onPressed: () => {
-              if (formKey.currentState!.validate())
-                onSubmit(Exercise(
-                    exercise.id,
-                    name.text,
-                    int.parse(sets.text),
-                    double.parse(restMinutes.text),
-                    int.parse(reps.text)))
-            },
+                  if (formKey.currentState!.validate())
+                    onSubmit(Exercise(
+                        exercise.id,
+                        name.text,
+                        int.parse(sets.text),
+                        double.parse(restMinutes.text),
+                        int.parse(reps.text)))
+                },
             child: const Text('OK'))
       ],
     );
@@ -58,6 +58,6 @@ Widget getTextField(TextEditingController controller, String label) {
     controller: controller,
     decoration: InputDecoration(labelText: label),
     validator: (value) =>
-    value != null && value.isEmpty ? '$label is required' : null,
+        value != null && value.isEmpty ? '$label is required' : null,
   );
 }

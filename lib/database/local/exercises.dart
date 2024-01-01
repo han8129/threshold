@@ -1,7 +1,6 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:demo_app_2/database/local/database_service.dart';
-import 'package:demo_app_2/model/exercise.dart';
-import '../remote/exercises.dart' as remote_exercises;
+import '/database/local/database_service.dart';
+import '/model/exercise.dart';
 
 const tableName = 'exercises';
 const columnId = 'id';
