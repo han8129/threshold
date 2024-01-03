@@ -31,29 +31,17 @@ class Create extends StatelessWidget {
           child: Column(
             children: [
               TextFormField(
-                  autofocus: false,
-                  controller: dateField,
-                  decoration: InputDecoration(labelText: 'Date'),
-                  validator: (value) => (value == null)
-                      ? null
-                      : (DateTime.tryParse(value) != null)
-                          ? 'Invalid Date'
-                          : null),
+                autofocus: false,
+                controller: dateField,
+                decoration: InputDecoration(labelText: 'Date'),
+                validator: (value) => validateDate(value),
+              ),
               TextFormField(
                 autofocus: true,
                 controller: durationField,
                 decoration: InputDecoration(
                     labelText: 'Duration in Seconds', hintText: 'Eg: 1.1'),
-                validator: (number) {
-                  if (null == number) {
-                    return 'Duration is required';
-                  }
-                  if (null == double.tryParse(number)) {
-                    return "Not a valid number";
-                  }
-
-                  return null;
-                },
+                validator: (value) => validateDate(value),
               ),
               TextFormField(
                   controller: noteField,
@@ -70,24 +58,34 @@ class Create extends StatelessWidget {
     );
   }
 
+  String? validateDate(String? value) {
+    if (value == null || value.isEmpty) {
+      dateField.text = DateFormat.yMd().format(DateTime.now());
+      return 'Date is required';
+    }
+
+    if (DateTime.tryParse(value) == null) return 'Invalid Date';
+
+    return null;
+  }
+
+  validateDuration(String? value) {
+    if (null == value) {
+      return 'Duration is required';
+    }
+
+    if (null == double.tryParse(value)) {
+      return "Not a valid number";
+    }
+
+    return null;
+  }
+
   Record getNewRecord() {
-    DateTime date = (DateFormat.yMd().format(DateTime.now()) == dateField.text)
-        ? DateTime.now()
-        : DateTime.parse(dateField.text);
+    DateTime date = DateFormat.yMd().parse(dateField.text);
+
     double duration = double.parse(durationField.text);
 
-    return (noteField.text == '')
-        ? Record(Uuid().v1(), exercise.id, duration, date)
-        : Record(Uuid().v1(), exercise.id, duration, date, noteField.text);
+    return Record(Uuid().v1(), exercise.id, duration, date, noteField.text);
   }
-}
-
-Widget getTextField(TextEditingController controller, String label) {
-  return TextFormField(
-    autofocus: true,
-    controller: controller,
-    decoration: InputDecoration(hintText: label),
-    validator: (value) =>
-        value != null && value.isEmpty ? '$label is required' : null,
-  );
 }

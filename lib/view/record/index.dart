@@ -100,7 +100,7 @@ class _IndexState extends State<Index> {
                         ],
                       ),
                       trailing: IconButton(
-                        onPressed: delete(record),
+                        onPressed: () async => delete(record),
                         icon: const Icon(
                           Icons.delete,
                           color: Colors.red,
@@ -122,13 +122,13 @@ class _IndexState extends State<Index> {
               context: context,
               builder: (_) => Create(
                   exercise: widget.exercise,
-                  onSubmit: (record) async => await create(record)),
+                  onSubmit: (record) => create(record)),
             );
           },
         ),
       );
 
-  create(Record record) async {
+  void create(Record record) async {
     record.isSynced = await remote_repository.post(record);
 
     await localRepository.create(record);
@@ -140,7 +140,7 @@ class _IndexState extends State<Index> {
     Navigator.of(context).pop();
   }
 
-  delete(Record record) async {
+  void delete(Record record) async {
     if (1 > await localRepository.delete(record)) return;
 
     await deletedRepository.create(record);
@@ -152,7 +152,7 @@ class _IndexState extends State<Index> {
     getRecords();
   }
 
-  update(Record record) async {
+  void update(Record record) async {
     await localRepository.update(record);
 
     if (!mounted) return;

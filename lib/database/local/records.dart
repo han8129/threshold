@@ -46,7 +46,8 @@ CREATE TABLE IF NOT EXISTS "$tableName" (
             element[columnId] as String,
             element[columnExerciseId] as String,
             element[columnDurationSeconds] as double,
-            DateTime.parse(element[columnDate] as String)))
+            DateTime.parse(element[columnDate] as String),
+            element[columnNote] as String))
         .toList();
   }
 
@@ -73,7 +74,10 @@ CREATE TABLE IF NOT EXISTS "$tableName" (
 
     final record = records.last;
 
-    return Record(id, record[columnExerciseId] as String, record[columnDurationSeconds] as double,
+    return Record(
+        id,
+        record[columnExerciseId] as String,
+        record[columnDurationSeconds] as double,
         record[columnDate] as DateTime);
   }
 

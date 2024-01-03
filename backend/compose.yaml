@@ -1,0 +1,6 @@
+services:
+  app:
+    build: .
+    container_name: threshold
+    ports:
+      - "8000:80"

@@ -23,10 +23,28 @@ class Create extends StatelessWidget {
           key: _formKey,
           child: Column(
             children: [
-              getTextField(name, 'Name'),
-              getTextField(sets, 'Sets'),
-              getTextField(restMinutes, 'Rest minutes'),
-              getTextField(reps, 'Reps'),
+              TextFormField(
+                autofocus: true,
+                controller: name,
+                decoration: InputDecoration(labelText: 'Name'),
+                validator: (value) => (value == null || value.isEmpty)
+                    ? 'Name is required'
+                    : null,
+              ),
+              TextFormField(
+                controller: sets,
+                decoration: InputDecoration(labelText: 'Sets'),
+                validator: (value) => validateSets(value),
+              ),
+              TextFormField(
+                controller: restMinutes,
+                decoration: InputDecoration(labelText: 'Rest Minutes'),
+                validator: (value) => validateRestMinutes(value),
+              ),
+              TextFormField(
+                  controller: reps,
+                  decoration: InputDecoration(labelText: 'Reps'),
+                  validator: (value) => validateReps(value)),
             ],
           )),
       actions: [
@@ -49,12 +67,38 @@ class Create extends StatelessWidget {
   }
 }
 
-Widget getTextField(TextEditingController controller, String label) {
-  return TextFormField(
-    autofocus: true,
-    controller: controller,
-    decoration: InputDecoration(labelText: label),
-    validator: (value) =>
-        value != null && value.isEmpty ? '$label is required' : null,
-  );
+String? validateSets(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Sets is required';
+  }
+
+  if (int.tryParse(value) == null) {
+    return 'Not a valid number';
+  }
+
+  return null;
+}
+
+String? validateRestMinutes(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Sets is required';
+  }
+
+  if (double.tryParse(value) == null) {
+    return 'Not a valid number';
+  }
+
+  return null;
+}
+
+String? validateReps(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Sets is required';
+  }
+
+  if (int.tryParse(value) == null) {
+    return 'Not a valid number';
+  }
+
+  return null;
 }

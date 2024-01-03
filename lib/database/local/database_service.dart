@@ -1,6 +1,6 @@
-import '/database/local/deleted_exercises.dart';
-import '/database/local/deleted_records.dart';
-import '/database/local/records.dart';
+import 'deleted_exercises.dart';
+import 'deleted_records.dart';
+import 'records.dart';
 
 import 'exercises.dart';
 import 'package:flutter/cupertino.dart';

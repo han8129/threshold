@@ -1,7 +1,7 @@
 const exercises = require('./database/exercises.js')
 const records = require('./database/records.js')
 const express = require('express')
-const port = 8000
+const port = 80
 const app = express()
 
 
