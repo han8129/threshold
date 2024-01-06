@@ -12,7 +12,6 @@ const columnIsSynced = 'is_synced';
 const unSynced = 0;
 
 class ExercisesRepository {
-
   Future<void> createTable(Database database) async {
     await database.execute('''
     CREATE TABLE IF NOT EXISTS $tableName (
@@ -35,16 +34,15 @@ class ExercisesRepository {
 
   Future<List<Exercise>> getAll() async {
     final database = await DatabaseService.database;
-    final exercises =
-    await database.query(tableName, distinct: true);
+    final exercises = await database.query(tableName, distinct: true);
 
     return exercises.map((e) => Exercise.fromMap(e)).toList();
   }
 
   Future<List<Exercise>> getUnsynced() async {
     final database = await DatabaseService.database;
-    final exercises =
-    await database.query(tableName, distinct: true, where: "$columnIsSynced = $unSynced");
+    final exercises = await database.query(tableName,
+        distinct: true, where: "$columnIsSynced = $unSynced");
 
     return exercises.map((e) => Exercise.fromMap(e)).toList();
   }
@@ -70,4 +68,3 @@ class ExercisesRepository {
         .delete(tableName, where: 'id = ?', whereArgs: [exercise.id]);
   }
 }
-

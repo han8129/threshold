@@ -1,8 +1,5 @@
-import 'dart:ffi';
-import 'dart:io';
+import '/database/local/exercises.dart';
 
-import '/database/local/exercises.dart' as Exercises;
-import 'package:flutter/animation.dart';
 class Exercise {
   late String id;
   late String name;
@@ -13,36 +10,37 @@ class Exercise {
 
   Map<String, String> toMap() {
     return <String, String>{
-      Exercises.columnId : id,
-      Exercises.columnName : name,
-      Exercises.columnSets : sets.toString(),
-      Exercises.columnRestMinutes : restMinutes.toString(),
-      Exercises.columnReps : reps.toString(),
-      Exercises.columnIsSynced : (isSynced) ? '1' : '0',
+      columnId: id,
+      columnName: name,
+      columnSets: sets.toString(),
+      columnRestMinutes: restMinutes.toString(),
+      columnReps: reps.toString(),
+      columnIsSynced: (isSynced) ? '1' : '0',
     };
   }
 
   Map<String, String> toMapNoId() {
     return <String, String>{
-      Exercises.columnName : name,
-      Exercises.columnSets : sets.toString(),
-      Exercises.columnRestMinutes : restMinutes.toString(),
-      Exercises.columnReps : reps.toString(),
+      columnName: name,
+      columnSets: sets.toString(),
+      columnRestMinutes: restMinutes.toString(),
+      columnReps: reps.toString(),
     };
   }
 
-  Exercise(this.id, this.name, this.sets, this.restMinutes, this.reps );
+  Exercise(this.id, this.name, this.sets, this.restMinutes, this.reps);
 
   Exercise.fromMap(Map<String, Object?> map) {
-    name = map[Exercises.columnName] as String;
-    sets = map[Exercises.columnSets] as int;
-    restMinutes = map[Exercises.columnRestMinutes] as double;
-    reps = map[Exercises.columnReps] as int;
-    id = map[Exercises.columnId] as String;
-    isSynced = (map[Exercises.columnIsSynced] as int == 1);
+    name = map[columnName] as String;
+    sets = map[columnSets] as int;
+    restMinutes = map[columnRestMinutes] as double;
+    reps = map[columnReps] as int;
+    id = map[columnId] as String;
+    isSynced = (map[columnIsSynced] as int == 1);
   }
 
-  set setIsSynced(bool value){
+  set setIsSynced(bool value) {
     isSynced = value;
   }
 }
+
