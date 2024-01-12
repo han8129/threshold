@@ -1,6 +1,8 @@
 import 'view/exercise/index.dart';
 import 'package:flutter/material.dart';
 
+import 'view/record/graph.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -10,7 +12,7 @@ void main() async {
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
     ),
-    home: Index(),
+  home: Index(),
   ));
 
  // sync();

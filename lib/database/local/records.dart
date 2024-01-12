@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'database_service.dart';
 import '../../model/record.dart';
@@ -41,14 +42,7 @@ CREATE TABLE IF NOT EXISTS "$tableName" (
     final records =
         await database.query(tableName, where: '$columnExerciseId = "$id"');
 
-    return records
-        .map((element) => Record(
-            element[columnId] as String,
-            element[columnExerciseId] as String,
-            element[columnDurationSeconds] as double,
-            DateTime.parse(element[columnDate] as String),
-            element[columnNote] as String))
-        .toList();
+    return records .map((element) => Record.fromMap(element)).toList(growable: false) ;
   }
 
   Future<List<Record>> getUnsynced() async {
@@ -59,26 +53,26 @@ CREATE TABLE IF NOT EXISTS "$tableName" (
       where: '$columnIsSynced = $unSynced',
     );
 
-    return records
-        .map((element) => Record(
-            element[columnId] as String,
-            element[columnExerciseId] as String,
-            element[columnDurationSeconds] as double,
-            DateTime.parse(element[columnDate] as String)))
-        .toList();
+    return records .map((element) => Record.fromMap(element)).toList(growable: false) ;
   }
 
   Future<Record> getById(String id) async {
     final database = await DatabaseService.database;
     final records = await database.query(tableName, where: "id = $id");
+    if (records.isEmpty)
+      throw new Exception("Record with $id does not exists");
 
-    final record = records.last;
+    return Record.fromMap(records.last);
+  }
 
-    return Record(
-        id,
-        record[columnExerciseId] as String,
-        record[columnDurationSeconds] as double,
-        record[columnDate] as DateTime);
+  Future<List<Record>> getByDates({required DateTime start, required DateTime end}) async {
+    final database = await DatabaseService.database;
+
+    final List<Map<String, Object?>> records = await database.query(tableName,
+        where: 'date($columnDate) BETWEEN date(?) AND date(?)',
+        whereArgs: [start.toString().substring(0, 11), end.toString().substring(0,11)]);
+
+    return records.map((element) => Record.fromMap(element)).toList(growable: false);
   }
 
 // put
