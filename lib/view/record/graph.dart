@@ -5,26 +5,27 @@ import 'package:threshold/database/local/records.dart';
 import 'package:threshold/model/record.dart';
 
 class MyPainter extends StatefulWidget {
+  final RecordsTable repository = RecordsTable();
+
   @override
   State<MyPainter> createState() => _MyPainterState();
 }
 
 class _MyPainterState extends State<MyPainter> {
   late Future<List<Record>> records;
-  final recordsRepository = RecordsTable();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    records = recordsRepository.getByDates(
-        start: DateTime.now().subtract(Duration(days: 3)), end: DateTime.now());
+    records = widget.repository.getByDates(
+        start: DateTime.now().subtract(Duration(days: 7)), end: DateTime.now());
   }
 
   void _setDates({required DateTime startDate, required DateTime endDate}) {
     setState(() {
-      records = recordsRepository.getByDates(start: startDate, end: endDate);
+      records = widget.repository.getByDates(start: startDate, end: endDate);
     });
   }
 
@@ -70,7 +71,6 @@ class ShapePainter extends CustomPainter {
 
     maxY = points.map((point) => point.y).reduce(max);
 
-
     segmentX = (size.width / points.length);
 
     var paint = Paint()
@@ -86,7 +86,8 @@ class ShapePainter extends CustomPainter {
       final Point endPoint = points[end];
 
       canvas.drawLine(
-          Offset(segmentX * start, startPoint.getY / maxY * size.height * 2 / 3),
+          Offset(
+              segmentX * start, startPoint.getY / maxY * size.height * 2 / 3),
           Offset(segmentX * end, endPoint.getY / maxY * size.height * 2 / 3),
           paint);
     }
@@ -95,7 +96,7 @@ class ShapePainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     // TODO: implement shouldRepaint
-    return false;
+    return true;
   }
 }
 

@@ -51,3 +51,7 @@ app.*.map.json
 /backend/node_modules/
 /backend/package-lock.json
 /pubspec.lock
+/.attach_pid29331
+/.attach_pid32352
+/dump.rdb
+/README.md
